@@ -1,10 +1,11 @@
-import React from 'react';
-import App from './App.js';
-import ReactDOM from 'react-dom';
 
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+import './assets/css/reset.less';
+import App from './App.js';
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <Router>
+        <App />
+    </Router>,
+    document.getElementById('root')
 );
