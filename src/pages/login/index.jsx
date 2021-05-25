@@ -14,8 +14,8 @@ class Login extends Component {
         const {username,password} = {username:'admin',password:'123456'};
         let result = await reqLogin(username,password);
         if(result.status === 0){
+            this.props.saveUserInfo(result);
             this.props.history.replace('/admin');
-            this.props.saveUserInfo(result)
         }else{
             message.warn('出错了！');
         }
