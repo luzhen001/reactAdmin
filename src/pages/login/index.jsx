@@ -1,9 +1,30 @@
 import React, { Component } from "react";
-import { Form, Input, Button } from "antd";
+import {Redirect} from 'react-router-dom'
+import { Form, Input, Button,message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import {connect} from 'react-redux'
+import {createSaveUserInfoAction} from '../../redux/creators/login_action.js'
+
+import {reqLogin} from '../../api/'
 import "./index.less";
-export default class index extends Component {
+
+class Login extends Component {
+    handleSubmit = async (e) => {
+        e.preventDefault();
+        const {username,password} = {username:'admin',password:'123456'};
+        let result = await reqLogin(username,password);
+        if(result.status === 0){
+            this.props.history.replace('/admin');
+            this.props.saveUserInfo(result)
+        }else{
+            message.warn('出错了！');
+        }
+    }
     render () {
+        let {isLogin} = this.props;
+        if(isLogin){
+            return <Redirect to="/admin" />
+        }else{
         return (
             <div className="login_wrap">
                 <div className="login_header">
@@ -16,10 +37,6 @@ export default class index extends Component {
                             <Form.Item name="username"
                                 rules={[
                                     { required: true, message: "请输入用户名！" },
-                                    {
-                                        pattern: /^1\d{10}$/,
-                                        message: '不合法的手机号格式!',
-                                    }
                                 ]}>
                                 <Input
                                     prefix={<UserOutlined className="site-form-item-icon" />}
@@ -41,15 +58,24 @@ export default class index extends Component {
                                 <Button
                                     type="primary"
                                     htmlType="submit"
-                                    className="login-form-button">
-                                    {" "}
-                                     Log in{" "}
+                                    className="login-form-button"
+                                    onClick={this.handleSubmit}
+                                >
+                                    登录
                                 </Button>
                             </Form.Item>
                         </Form>
                     </div>
                 </div>
             </div>
-        )
+            )
+        }
     }
 }
+
+export default connect(
+    state => ({isLogin:state.userInfo.isLogin}),
+    {
+        saveUserInfo:createSaveUserInfoAction
+    }
+)(Login)
